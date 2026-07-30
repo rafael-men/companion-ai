@@ -18,6 +18,10 @@ export default function SidePanel({
   onBackgroundChange,
   nomeUsuario,
   onNomeUsuarioChange,
+  lipSyncIntensity,
+  onLipSyncIntensityChange,
+  panelTheme,
+  onPanelThemeChange,
   dark,
   onToggleDark,
 }) {
@@ -29,9 +33,9 @@ export default function SidePanel({
   useEffect(() => {
     localStorage.setItem(
       "companion-config",
-      JSON.stringify({ avatar, personalidade, armAngle })
+      JSON.stringify({ avatar, personalidade, armAngle, lipSyncIntensity, panelTheme })
     )
-  }, [avatar, personalidade, armAngle])
+  }, [avatar, personalidade, armAngle, lipSyncIntensity, panelTheme])
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -55,6 +59,7 @@ export default function SidePanel({
       <aside
         className={cn(
           "sidebar-glass fixed left-0 top-0 z-30 flex h-full flex-col border-r border-sidebar-border transition-all duration-300 ease-in-out",
+          `panel-theme-${panelTheme}`,
           open ? "translate-x-0 w-[85vw] max-w-72" : "-translate-x-full",
           "sm:translate-x-0",
           expanded ? "sm:w-72" : "sm:w-16"
@@ -74,6 +79,10 @@ export default function SidePanel({
             onBackgroundChange={onBackgroundChange}
             nomeUsuario={nomeUsuario}
             onNomeUsuarioChange={onNomeUsuarioChange}
+            lipSyncIntensity={lipSyncIntensity}
+            onLipSyncIntensityChange={onLipSyncIntensityChange}
+            panelTheme={panelTheme}
+            onPanelThemeChange={onPanelThemeChange}
           />
         ) : (
           <SidebarRail

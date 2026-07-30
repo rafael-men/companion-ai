@@ -15,6 +15,8 @@ export default function App() {
   const [avatar, setAvatar] = useState(MODELOS[0]?.file)
   const [armAngle, setArmAngle] = useState(1.35)
   const [background, setBackground] = useState(null)
+  const [lipSyncIntensity, setLipSyncIntensity] = useState(1)
+  const [panelTheme, setPanelTheme] = useState('default')
   const [eyesClosed, setEyesClosed] = useState(false)
   const [nomeUsuario, setNomeUsuario] = useState('')
   const timeoutRef = useRef(null)
@@ -23,7 +25,7 @@ export default function App() {
 
   const nomeModelo = MODELOS.find((m) => m.file === avatar)?.label || 'Companheiro'
 
-  const { chat, loading, speaking, speechText, gesture, sendMessage, falarComoBot } =
+  const { chat, loading, speaking, speechText, gesture, emotion, sendMessage, falarComoBot } =
     useChat(personalidade, nomeModelo, nomeUsuario)
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export default function App() {
 
   return (
     <div className="app pl-0 sm:pl-16" style={appStyle}>
-      <ThreeViewer speaking={speaking} speechText={speechText} avatar={avatar} armAngle={armAngle} gesture={gesture} onFaceClick={handleFaceClick} eyesClosed={eyesClosed} />
+      <ThreeViewer speaking={speaking} speechText={speechText} avatar={avatar} armAngle={armAngle} gesture={gesture} emotion={emotion} lipSyncIntensity={lipSyncIntensity} onFaceClick={handleFaceClick} eyesClosed={eyesClosed} />
       <ChatHistory messages={chat} loading={loading} />
       <ChatBox onSend={sendMessage} />
       <SidePanel
@@ -80,6 +82,10 @@ export default function App() {
         onBackgroundChange={setBackground}
         nomeUsuario={nomeUsuario}
         onNomeUsuarioChange={setNomeUsuario}
+        lipSyncIntensity={lipSyncIntensity}
+        onLipSyncIntensityChange={setLipSyncIntensity}
+        panelTheme={panelTheme}
+        onPanelThemeChange={setPanelTheme}
         dark={dark}
         onToggleDark={toggleDark}
       />

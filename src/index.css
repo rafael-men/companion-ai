@@ -257,8 +257,8 @@ html, body, #root {
 
 
 .sidebar-glass {
-  background: var(--sidebar);
-  color: var(--sidebar-foreground);
+  background: var(--sidebar-theme-bg, var(--sidebar));
+  color: var(--sidebar-theme-foreground, var(--sidebar-foreground));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow:
@@ -266,11 +266,203 @@ html, body, #root {
     inset -1px 0 0 var(--glass-border-light);
 }
 
+.sidebar-glass,
+.sidebar-glass input,
+.sidebar-glass select,
+.sidebar-glass button,
+.sidebar-glass textarea,
+.sidebar-glass label,
+.sidebar-glass span,
+.sidebar-glass p,
+.sidebar-glass a {
+  color: var(--sidebar-theme-foreground, var(--sidebar-foreground));
+}
+
+.sidebar-glass .text-muted-foreground {
+  color: var(--sidebar-theme-muted-foreground, var(--muted-foreground));
+}
+
+.sidebar-glass input::placeholder,
+.sidebar-glass textarea::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.dark .sidebar-glass input::placeholder,
+.dark .sidebar-glass textarea::placeholder {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.panel-theme-default.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.98 0.01 285 / 0.55);
+  --sidebar-theme-foreground: oklch(0.12 0.08 285);
+  --sidebar-theme-muted-foreground: oklch(0.25 0.08 285);
+  --sidebar-theme-border: oklch(0.72 0.06 290 / 0.25);
+  --sidebar-theme-accent: oklch(0.88 0.06 290 / 0.5);
+}
+
+.dark .panel-theme-default.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.16 0.04 285 / 0.75);
+  --sidebar-theme-foreground: oklch(0.95 0.01 285);
+  --sidebar-theme-muted-foreground: oklch(0.72 0.08 285);
+  --sidebar-theme-border: oklch(0.65 0.12 285 / 0.25);
+  --sidebar-theme-accent: oklch(0.75 0.22 285 / 0.55);
+}
+
+.panel-theme-cool.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.94 0.06 210 / 0.55);
+  --sidebar-theme-foreground: oklch(0.12 0.06 215);
+  --sidebar-theme-muted-foreground: oklch(0.28 0.08 215);
+  --sidebar-theme-border: oklch(0.60 0.10 220 / 0.25);
+  --sidebar-theme-accent: oklch(0.55 0.28 230 / 0.6);
+}
+
+.dark .panel-theme-cool.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.14 0.07 215 / 0.72);
+  --sidebar-theme-foreground: oklch(0.94 0.02 225);
+  --sidebar-theme-muted-foreground: oklch(0.72 0.08 225);
+  --sidebar-theme-border: oklch(0.45 0.12 220 / 0.28);
+  --sidebar-theme-accent: oklch(0.57 0.30 210 / 0.75);
+}
+
+.panel-theme-warm.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.96 0.16 50 / 0.58);
+  --sidebar-theme-foreground: oklch(0.15 0.08 35);
+  --sidebar-theme-muted-foreground: oklch(0.30 0.09 35);
+  --sidebar-theme-border: oklch(0.68 0.14 45 / 0.25);
+  --sidebar-theme-accent: oklch(0.82 0.30 45 / 0.6);
+}
+
+.dark .panel-theme-warm.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.18 0.08 45 / 0.62);
+  --sidebar-theme-foreground: oklch(0.94 0.02 35);
+  --sidebar-theme-muted-foreground: oklch(0.68 0.10 35);
+  --sidebar-theme-border: oklch(0.72 0.15 45 / 0.30);
+  --sidebar-theme-accent: oklch(0.90 0.35 45 / 0.80);
+}
+
+.panel-theme-neon.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.18 0.20 280 / 0.88);
+  --sidebar-theme-foreground: oklch(0.92 0.04 285);
+  --sidebar-theme-muted-foreground: oklch(0.75 0.08 285);
+  --sidebar-theme-border: oklch(0.55 0.34 285 / 0.5);
+  --sidebar-theme-accent: oklch(0.80 0.35 330 / 0.8);
+}
+
+.dark .panel-theme-neon.sidebar-glass {
+  --sidebar-theme-bg: oklch(0.10 0.22 280 / 0.92);
+  --sidebar-theme-foreground: oklch(0.98 0.02 285);
+  --sidebar-theme-muted-foreground: oklch(0.80 0.10 285);
+  --sidebar-theme-border: oklch(0.45 0.32 285 / 0.55);
+  --sidebar-theme-accent: oklch(0.90 0.40 330 / 0.95);
+}
+
+.theme-swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: var(--color-card);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.theme-swatch-default {
+  background: var(--theme-swatch-default);
+}
+
+.theme-swatch-cool {
+  background: var(--theme-swatch-cool);
+}
+
+.theme-swatch-warm {
+  background: var(--theme-swatch-warm);
+}
+
+.theme-swatch-neon {
+  background: var(--theme-swatch-neon);
+}
+
+:root {
+  --theme-swatch-default: radial-gradient(circle at top left, oklch(0.88 0.16 300 / 0.92), oklch(0.80 0.18 290 / 0.85));
+  --theme-swatch-cool: radial-gradient(circle at top left, oklch(0.86 0.18 215 / 0.92), oklch(0.68 0.12 225 / 0.85));
+  --theme-swatch-warm: radial-gradient(circle at top left, oklch(0.90 0.24 45 / 0.92), oklch(0.76 0.26 40 / 0.85));
+  --theme-swatch-neon: radial-gradient(circle at top left, oklch(0.35 0.30 330 / 0.95), oklch(0.18 0.22 285 / 0.85));
+}
+
+.dark {
+  --theme-swatch-default: radial-gradient(circle at top left, oklch(0.65 0.18 295 / 0.92), oklch(0.42 0.12 285 / 0.82));
+  --theme-swatch-cool: radial-gradient(circle at top left, oklch(0.45 0.18 215 / 0.92), oklch(0.28 0.08 235 / 0.82));
+  --theme-swatch-warm: radial-gradient(circle at top left, oklch(0.65 0.26 50 / 0.92), oklch(0.55 0.22 40 / 0.82));
+  --theme-swatch-neon: radial-gradient(circle at top left, oklch(0.20 0.28 300 / 0.95), oklch(0.12 0.20 275 / 0.85));
+}
+
+.theme-swatch:focus-visible,
+.theme-swatch[aria-pressed="true"] {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring), inset 0 0 0 1px rgba(255,255,255,0.4);
+}
+
+.theme-swatch-default,
+.theme-swatch-cool,
+.theme-swatch-warm,
+.theme-swatch-neon {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-swatch-default:hover,
+.theme-swatch-cool:hover,
+.theme-swatch-warm:hover,
+.theme-swatch-neon:hover {
+  transform: translateY(-1px);
+}
 
 @keyframes liquid-bounce {
   0%, 80%, 100% { transform: scale(0.6) translateY(0); opacity: 0.4; }
   40% { transform: scale(1) translateY(-4px); opacity: 1; }
 }
+
+.theme-swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: var(--color-card);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.theme-swatch-default {
+  background: radial-gradient(circle at top left, oklch(0.88 0.16 300 / 0.92), oklch(0.80 0.18 290 / 0.85));
+}
+
+.theme-swatch-cool {
+  background: radial-gradient(circle at top left, oklch(0.86 0.18 215 / 0.92), oklch(0.68 0.12 225 / 0.85));
+}
+
+.theme-swatch-warm {
+  background: radial-gradient(circle at top left, oklch(0.90 0.24 45 / 0.92), oklch(0.76 0.26 40 / 0.85));
+}
+
+.theme-swatch-neon {
+  background: radial-gradient(circle at top left, oklch(0.35 0.30 330 / 0.95), oklch(0.18 0.22 285 / 0.85));
+}
+
+.theme-swatch:focus-visible,
+.theme-swatch[aria-pressed="true"] {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring), inset 0 0 0 1px rgba(255,255,255,0.4);
+}
+
+.theme-swatch-default,
+.theme-swatch-cool,
+.theme-swatch-warm,
+.theme-swatch-neon {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-swatch-default:hover,
+.theme-swatch-cool:hover,
+.theme-swatch-warm:hover,
+.theme-swatch-neon:hover {
+  transform: translateY(-1px);
+}
+
 .typing-dot {
   animation: liquid-bounce 1.2s ease-in-out infinite;
 }

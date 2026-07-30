@@ -23,9 +23,16 @@ export function precisaBuscar(texto) {
  * @param {string} query 
  * @returns {Promise<string>} 
  */
+const webSearchCache = new Map()
+
 export async function buscarNaWeb(query) {
   const API_KEY = import.meta.env.VITE_TAVILY_KEY
   if (!API_KEY) return ""
+
+  const cacheKey = query.trim().toLowerCase()
+  if (webSearchCache.has(cacheKey)) {
+    return webSearchCache.get(cacheKey)
+  }
 
   try {
     const response = await fetch(TAVILY_URL, {
@@ -47,7 +54,6 @@ export async function buscarNaWeb(query) {
 
     const data = await response.json()
 
-  
     const partes = []
     if (data.answer) partes.push(`Resumo: ${data.answer}`)
     if (Array.isArray(data.results)) {
@@ -55,7 +61,9 @@ export async function buscarNaWeb(query) {
         if (r.content) partes.push(`- ${r.title}: ${r.content}`)
       })
     }
-    return partes.join("\n")
+    const resultado = partes.join("\n")
+    webSearchCache.set(cacheKey, resultado)
+    return resultado
   } catch (error) {
     console.error("Erro ao buscar na web:", error)
     return ""

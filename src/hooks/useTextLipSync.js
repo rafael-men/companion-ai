@@ -52,7 +52,7 @@ function buildTimeline(text, durationMs) {
  * @param {boolean} isSpeaking 
  * @returns {{aa:number, ih:number, uu:number, eh:number, oh:number}}
  */
-export function useTextLipSync(text, isSpeaking) {
+export function useTextLipSync(text, isSpeaking, intensity = 1) {
   const [currentIntensities, setCurrentIntensities] = useState({ ...ZERO })
   const startTimeRef = useRef(null)
   const frameRef = useRef(null)
@@ -99,7 +99,13 @@ export function useTextLipSync(text, isSpeaking) {
           oh: lerp(previous.oh, target.oh, factor),
         }
         previous = smoothed
-        setCurrentIntensities(smoothed)
+        setCurrentIntensities({
+          aa: Math.min(1, smoothed.aa * intensity),
+          ih: Math.min(1, smoothed.ih * intensity),
+          uu: Math.min(1, smoothed.uu * intensity),
+          eh: Math.min(1, smoothed.eh * intensity),
+          oh: Math.min(1, smoothed.oh * intensity),
+        })
       }
 
       frameRef.current = requestAnimationFrame(animate)

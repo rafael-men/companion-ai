@@ -8,6 +8,8 @@ export default function ThreeViewer({
   avatar = 'example.vrm',
   armAngle = 1.0,
   gesture = null,
+  emotion = "neutral",
+  lipSyncIntensity = 1,
   onFaceClick = () => {},
   eyesClosed = false,
 }) {
@@ -21,6 +23,8 @@ export default function ThreeViewer({
         speechText={speechText}
         armAngle={armAngle}
         gesture={gesture}
+        emotion={emotion}
+        lipSyncIntensity={lipSyncIntensity}
         eyesClosed={eyesClosed}
       />
       <OrbitControls target={[0, 1.0, 0]} minDistance={1.2} maxDistance={4} />

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { prepararAvatar, animarAvatar } from "@/lib/vrm";
 import { useTextLipSync } from "@/hooks/useTextLipSync";
 
-export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle = 1.0, gesture = null, eyesClosed = false, ...props }) => {
+export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle = 1.0, gesture = null, emotion = "neutral", lipSyncIntensity = 1, eyesClosed = false, ...props }) => {
     const { scene, userData } = useGLTF(`models/${avatar}`, undefined, undefined, (loader) => {
         loader.register((parser) => {
             return new VRMLoaderPlugin(parser);
@@ -13,7 +13,7 @@ export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle 
     });
 
 
-    const intensities = useTextLipSync(speechText, speaking);
+    const intensities = useTextLipSync(speechText, speaking, lipSyncIntensity);
     const intensitiesRef = useRef(intensities);
     intensitiesRef.current = intensities;
 
@@ -51,7 +51,8 @@ export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle 
             armAngleRef.current,
             gestureRef.current,
             eyesClosedRef.current,
-            mouseRef.current
+            mouseRef.current,
+            emotion
         );
     });
 

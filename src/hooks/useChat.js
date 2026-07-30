@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react"
 import { sendMessageToLLM } from "@/lib/llm"
-import { detectarGesto, DURACAO_GESTO } from "@/lib/gesto"
+import { detectarGesto, detectarEmocao, DURACAO_GESTO } from "@/lib/gesto"
 
 
 function duracaoDaFala(texto) {
@@ -14,6 +14,7 @@ export function useChat(personalidade, nomeModelo, nomeUsuario) {
   const [speaking, setSpeaking] = useState(false)
   const [speechText, setSpeechText] = useState("")
   const [gesture, setGesture] = useState(null)
+  const [emotion, setEmotion] = useState("neutral")
   const speakTimer = useRef(null)
   const gestureTimer = useRef(null)
 
@@ -35,6 +36,7 @@ export function useChat(personalidade, nomeModelo, nomeUsuario) {
       speakTimer.current = setTimeout(() => setSpeaking(false), duracaoDaFala(texto))
 
       gesticular(gestoForcado ?? detectarGesto(texto))
+      setEmotion(detectarEmocao(texto))
     },
     [gesticular]
   )
@@ -43,6 +45,7 @@ export function useChat(personalidade, nomeModelo, nomeUsuario) {
     async (msg) => {
       const updatedChat = [...chat, { sender: "user", text: msg }]
       setChat(updatedChat)
+      setEmotion("neutral")
       setLoading(true)
       try {
         const resposta = await sendMessageToLLM(updatedChat, personalidade, nomeModelo, nomeUsuario)
@@ -54,5 +57,5 @@ export function useChat(personalidade, nomeModelo, nomeUsuario) {
     [chat, personalidade, nomeModelo, nomeUsuario, falarComoBot]
   )
 
-  return { chat, loading, speaking, speechText, gesture, sendMessage, falarComoBot, gesticular }
+  return { chat, loading, speaking, speechText, gesture, emotion, sendMessage, falarComoBot, gesticular }
 }

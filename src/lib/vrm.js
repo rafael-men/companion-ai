@@ -92,6 +92,21 @@ function applyHead(humanoid, bind, t, gesture, mouse) {
 }
 
 
+function applyEmotion(expr, emotion) {
+  const values = {
+    happy: { joy: 1, neutral: 0, sorrow: 0, anger: 0 },
+    sad: { joy: 0, neutral: 0, sorrow: 1, anger: 0 },
+    angry: { joy: 0, neutral: 0, sorrow: 0, anger: 1 },
+    playful: { joy: 0.8, neutral: 0, sorrow: 0, anger: 0 },
+    neutral: { joy: 0, neutral: 1, sorrow: 0, anger: 0 },
+  }[emotion] || { joy: 0, neutral: 1, sorrow: 0, anger: 0 }
+
+  setExpr(expr, ["joy", "Joy"], values.joy)
+  setExpr(expr, ["sorrow", "Sorrow"], values.sorrow)
+  setExpr(expr, ["anger", "Angry"], values.anger)
+  setExpr(expr, ["neutral", "Neutral"], values.neutral)
+}
+
 function applyBlink(expr, t, eyesClosed = false) {
   const blink = eyesClosed ? 1 : (Math.sin(t * 2.5) > 0.97 ? 1 : 0)
   setExpr(expr, ["blink", "Blink"], blink)
@@ -115,7 +130,7 @@ function applyLipSync(expr, intensities) {
  * @param {boolean} eyesClosed 
  * @param {{x:number,y:number}|null} mouse 
  */
-export function animarAvatar(vrm, t, delta, intensities, armAngle = 1.0, gesture = null, eyesClosed = false, mouse = null) {
+export function animarAvatar(vrm, t, delta, intensities, armAngle = 1.0, gesture = null, eyesClosed = false, mouse = null, emotion = "neutral") {
   const humanoid = vrm.humanoid
   const breath = Math.sin(t * 1.5)
 
@@ -127,6 +142,7 @@ export function animarAvatar(vrm, t, delta, intensities, armAngle = 1.0, gesture
   if (expr) {
     applyBlink(expr, t, eyesClosed)
     applyLipSync(expr, intensities)
+    applyEmotion(expr, emotion)
   }
 
   vrm.update(delta)
