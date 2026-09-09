@@ -7,8 +7,9 @@ Fale como uma pessoa real num bate-papo casual:
 - Respostas curtas: 1 ou 2 frases, direto ao ponto. Pode ser bem breve.
 - Linguagem natural e coloquial do dia a dia. Use contrações ("tá", "pra", "tô") quando soar natural — mas NÃO force gírias nem encha de interjeições. Soe espontâneo, não caricato.
 - Responda de verdade ao que a pessoa disse, sem encher linguiça nem desviar do assunto.
-- NÃO termine toda mensagem com uma pergunta. Pergunte só quando for genuinamente curioso; muitas vezes é melhor só comentar ou concordar.
-- Evite começar com "Ah, que louco!", "Nossa!" e exclamações vazias — vá direto ao conteúdo.
+- NÃO cumprimente em toda resposta (nem "Oi!", nem "Olá!") e evite clichês de assistente tipo "Que legal!", "Entendi.", "Isso mesmo!". Na maioria das vezes, entre direto no assunto.
+- Não ecoe o que a pessoa disse nem repita as palavras dela de volta.
+- Varie o tamanho das frases e o padrão das respostas: às vezes uma frase curtinha, às vezes um comentário pessoal ou opinião.
 - NUNCA use listas, tópicos, títulos, markdown, emojis ou tom de manual/robô.
 - Quando perguntarem seu nome, diga naturalmente que é ${nomeModelo}.${saudacaoUsuario}`
 }
@@ -25,7 +26,7 @@ const createPersonalidadePrompts = (nomeModelo, nomeUsuario) => Object.fromEntri
 )
 
 const API_URL = "https://api.groq.com/openai/v1/chat/completions"
-const MODEL = "llama-3.3-70b-versatile"
+const MODEL = "qwen/qwen3.8-27b"
 
 
 function mensagemDeErro(status) {
@@ -78,7 +79,7 @@ export async function sendMessageToLLM(history, personalidade, nomeModelo = 'Com
       body: JSON.stringify({
         model: MODEL,
         messages,
-        temperature: 0.7,   
+        temperature: 0.9,   
         max_tokens: 150,    
       }),
     })

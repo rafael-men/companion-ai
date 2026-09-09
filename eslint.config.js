@@ -30,8 +30,19 @@ export default defineConfig([
     },
   },
   {
-    // Componentes gerados pelo shadcn/ui exportam também variantes (cva).
-    // O aviso de fast-refresh não se aplica a esses arquivos de UI.
+   
+    files: ['tests/**/*.{js,jsx}', '**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node, ...globals.jest },
+    },
+  },
+  {
+    files: ['electron/**/*.{js,cjs}'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['src/components/ui/**/*.{js,jsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',

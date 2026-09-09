@@ -53,8 +53,8 @@ export function detectarGesto(texto) {
 export function detectarEmocao(texto) {
   if (!texto) return "neutral"
   const t = normalizar(texto)
-  if (POSITIVAS.some((p) => t.includes(p))) return "happy"
   if (TRISTES.some((p) => t.includes(p))) return "sad"
+  if (POSITIVAS.some((p) => t.includes(p))) return "happy"
   if (IRONICAS.some((p) => t.includes(p))) return "playful"
   if (NEGATIVAS.some((p) => t.includes(p))) return "angry"
   return "neutral"

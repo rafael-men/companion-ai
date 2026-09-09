@@ -5,7 +5,7 @@ Um **companheiro virtual em 3D** renderizado em tempo real que conversa com voc�
 ## ✨ Funcionalidades
 
 ### Conversa com IA
-- **Chat com LLM** via [Groq](https://groq.com/) (modelo `llama-3.3-70b-versatile`), com respostas rápidas.
+- **Chat com LLM** via [Groq](https://groq.com/) (modelo `qwen/qwen3.8-27b`), com respostas rápidas.
 - **Memória de contexto** — o histórico inteiro da conversa é enviado ao modelo, então o companheiro lembra do que foi dito antes.
 - **Busca na web (RAG)** — perguntas factuais/atuais disparam uma busca via [Tavily](https://tavily.com); os resultados são injetados no contexto para respostas embasadas.
 - **Personalidades** selecionáveis (Amigável, Profissional, Engraçado, Sarcástico) que alteram o tom das respostas.
@@ -22,6 +22,9 @@ Um **companheiro virtual em 3D** renderizado em tempo real que conversa com voc�
 - **Gestos de cabeça** — acena (sim) ou nega (não) conforme o conteúdo da resposta.
 - **Animação procedural** — respiração, balanço sutil do corpo e piscar automáticos.
 - **Reação ao toque** — clicar no avatar faz ele fechar os olhos e reagir com uma fala.
+- **Animações VRMA** — emotes animados em `public/assets/animations/` via [@pixiv/three-vrm-animation](https://github.com/pixiv/three-vrm-animation), com crossfade suave entre animações.
+- **Seletor de emotes** — dropdown na sidebar para tocar qualquer animação VRMA (em loop ou uma única vez).
+- **Saudação animada** — ao abrir o app ou trocar de avatar, o personagem executa o emote de cumprimento (`VRMA_01.vrma`) uma única vez antes de voltar às animações procedurais.
 - **Pose natural ajustável** — braços baixados (saindo da T-pose) com ângulo controlável por slider (compatível com rigs diferentes).
 - **Orientação automática** — modelos VRM 0.x são girados para ficar de frente para a câmera.
 
@@ -44,6 +47,7 @@ Um **companheiro virtual em 3D** renderizado em tempo real que conversa com voc�
 | Ícones | lucide-react |
 | 3D | three, @react-three/fiber, @react-three/drei |
 | VRM | @pixiv/three-vrm |
+| Animação VRM | @pixiv/three-vrm-animation |
 | IA | Groq API (compatível com OpenAI) |
 | Busca web | Tavily API |
 
@@ -77,6 +81,7 @@ Acesse o endereço exibido no terminal (geralmente `http://localhost:5173`).
 | `npm run preview` | Pré-visualiza a build de produção |
 | `npm run lint` | Roda o ESLint |
 | `npm run models` | Regenera a lista de avatares a partir de `public/models/` |
+| `npm run animations` | Regenera a lista de animações a partir de `public/assets/animations/` |
 | `npm run backgrounds` | Regenera a lista de fundos a partir de `public/assets/` |
 
 ## 🎭 Adicionar conteúdo
@@ -85,7 +90,9 @@ Acesse o endereço exibido no terminal (geralmente `http://localhost:5173`).
 
 **Novo fundo:** coloque a imagem em `public/assets/` e rode `npm run backgrounds`.
 
-> Os modelos precisam ser **VRM** (não GLB/FBX). Modelos com rig humanoide e *blendshapes* de boca (`A I U E O`) aproveitam o lip-sync e as animações.
+**Nova animação:** coloque o arquivo `.vrma` em `public/assets/animations/` e rode `npm run animations`.
+
+> Os modelos precisam ser **VRM** (não GLB/FBX). Modelos com rig humanoide e *blendshapes* de boca (`A I U E O`) aproveitam o lip-sync e as animações. Para animações, use o formato **VRM Animation (`.vrma`)** — idealmente capturadas/exportadas para o mesmo rig do modelo.
 
 ## 📁 Estrutura
 
@@ -108,6 +115,8 @@ src/
     ├── llm.js               # Comunicação com o LLM (Groq) + injeção de busca
     ├── websearch.js         # Busca web (Tavily) e heurística de quando buscar
     ├── vrm.js               # Pose, animação, lip-sync e expressões do VRM
+    ├── vrma.js              # Carrega e reproduz animações VRMA (mixer, crossfade, término)
+    ├── animations.js        # Lista de animações VRMA (gerada)
     ├── gesto.js             # Detecta gesto de cabeça (sim/não) na resposta
     ├── saudacao.js          # Saudação contextual (hora do dia + ausência)
     ├── models.js            # Lista de avatares (gerada)

@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, X, Sun, Moon } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, Sun, Moon, PictureInPicture2 } from "lucide-react"
 import pkg from "../../../package.json"
 
 const version = pkg.version
 
-export default function SidebarFooter({ expanded, open, onToggle, onClose, dark, onToggleDark }) {
+export default function SidebarFooter({ expanded, open, onToggle, onClose, dark, onToggleDark, transparente, onToggleTransparencia }) {
   const aberto = expanded || open
 
   return (
@@ -29,6 +29,17 @@ export default function SidebarFooter({ expanded, open, onToggle, onClose, dark,
       </button>
 
    
+      <button
+        onClick={onToggleTransparencia}
+        className="flex h-9 w-full items-center justify-center gap-2 rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent"
+        aria-label={transparente ? "Sair do modo transparente" : "Ativar modo transparente"}
+        aria-pressed={transparente}
+      >
+        <PictureInPicture2 className="h-5 w-5" />
+        {aberto && <span className="text-sm">Modo transparente</span>}
+      </button>
+
+    
       <button
         onClick={onToggle}
         className="hidden h-9 w-full items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent sm:flex"

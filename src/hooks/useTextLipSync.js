@@ -39,7 +39,7 @@ function buildTimeline(text, durationMs) {
     const vogalAtiva = ativa ? Object.keys(ativa)[0] : "aa"
     const isVowel = !!vowelData
     const wobble = (Math.sin(i * 1.7) * 0.5 + 0.5) * 0.2
-    const openness = isVowel ? 0.7 + wobble : 0.15
+    const openness = isVowel ? Math.min(1, 0.7 + wobble) : 0.05
     intensities[vogalAtiva] = Math.min(1, openness)
 
     timeline.push({ time: i * frameDuration, intensities })

@@ -1,4 +1,4 @@
-import { User, Sparkles, Smile, Image, Palette, Waves } from "lucide-react"
+import { User, Sparkles, Smile, Image, Palette, Waves, Drama } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { MODELOS } from "@/lib/models"
+import { ANIMACOES } from "@/lib/animations"
 import { PERSONALIDADES } from "@/lib/personalidades"
 import { Field, FieldLabel } from "./Field"
 import BackgroundPicker from "./BackgroundPicker"
@@ -19,6 +20,8 @@ const PANEL_THEMES = [
   { value: "warm", label: "Quente", swatchClass: "theme-swatch-warm" },
   { value: "neon", label: "Neon", swatchClass: "theme-swatch-neon" },
 ]
+
+const EMOTE_NENHUM = "nenhum"
 
 export default function SidebarContent({
   avatar,
@@ -35,6 +38,8 @@ export default function SidebarContent({
   onLipSyncIntensityChange,
   panelTheme,
   onPanelThemeChange,
+  animation,
+  onAnimationChange,
 }) {
   return (
     <nav className="flex flex-1 flex-col gap-5 overflow-y-auto p-4">
@@ -115,6 +120,29 @@ export default function SidebarContent({
         />
         <span className="text-xs text-muted-foreground">
           Ajuste o quão preciso o avatar move a boca ao falar.
+        </span>
+      </Field>
+
+      <Field>
+        <FieldLabel icon={Drama}>Emote</FieldLabel>
+        <Select
+          value={animation ?? EMOTE_NENHUM}
+          onValueChange={(v) => onAnimationChange(v === EMOTE_NENHUM ? null : v)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Escolha um emote" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={EMOTE_NENHUM}>Nenhum</SelectItem>
+            {ANIMACOES.map((a) => (
+              <SelectItem key={a.file} value={a.file}>
+                {a.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span className="text-xs text-muted-foreground">
+          Toca a animação uma vez e volta ao movimento padrão.
         </span>
       </Field>
 

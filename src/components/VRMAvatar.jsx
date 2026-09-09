@@ -1,11 +1,12 @@
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { VRMLoaderPlugin } from '@pixiv/three-vrm';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { prepararAvatar, animarAvatar } from "@/lib/vrm";
+import { carregarVRMA, pararAnimacaoVRMA, tocarAnimacaoVRMA } from "@/lib/vrma";
 import { useTextLipSync } from "@/hooks/useTextLipSync";
 
-export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle = 1.0, gesture = null, emotion = "neutral", lipSyncIntensity = 1, eyesClosed = false, ...props }) => {
+export const VRMAvatar = ({ avatar, animation = null, animationLoop = true, onAnimationEnd = null, speaking = false, speechText = "", armAngle = 1.0, gesture = null, emotion = "neutral", lipSyncIntensity = 1, eyesClosed = false, ...props }) => {
     const { scene, userData } = useGLTF(`models/${avatar}`, undefined, undefined, (loader) => {
         loader.register((parser) => {
             return new VRMLoaderPlugin(parser);
@@ -39,6 +40,24 @@ export const VRMAvatar = ({ avatar, speaking = false, speechText = "", armAngle 
     useEffect(() => {
         prepararAvatar(scene, userData.vrm);
     }, [scene]);
+
+    const [vrma, setVrma] = useState(null);
+    useEffect(() => {
+        let ativo = true;
+        setVrma(null);
+        if (!animation) return;
+        carregarVRMA(`assets/animations/${animation}`)
+            .then((a) => { if (ativo) setVrma(a); })
+            .catch(() => { if (ativo) setVrma(null); });
+        return () => { ativo = false; };
+    }, [animation]);
+
+    useEffect(() => {
+        const vrm = userData.vrm;
+        if (!vrm) return;
+        if (vrma) tocarAnimacaoVRMA(vrm, vrma, { loop: animationLoop, onEnd: onAnimationEnd });
+        else pararAnimacaoVRMA(vrm);
+    }, [vrma, scene, animationLoop, onAnimationEnd]);
 
     useFrame((state, delta) => {
         const vrm = userData.vrm;

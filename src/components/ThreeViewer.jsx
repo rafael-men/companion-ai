@@ -6,6 +6,9 @@ export default function ThreeViewer({
   speaking = false,
   speechText = "",
   avatar = 'example.vrm',
+  animation = null,
+  animationLoop = true,
+  onAnimationEnd = null,
   armAngle = 1.0,
   gesture = null,
   emotion = "neutral",
@@ -19,6 +22,9 @@ export default function ThreeViewer({
       <directionalLight position={[5, 5, 5]} />
       <VRMAvatar
         avatar={avatar}
+        animation={animation}
+        animationLoop={animationLoop}
+        onAnimationEnd={onAnimationEnd}
         speaking={speaking}
         speechText={speechText}
         armAngle={armAngle}

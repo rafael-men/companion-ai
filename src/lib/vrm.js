@@ -44,6 +44,10 @@ export function prepararAvatar(scene, vrm) {
   vrm._headBind = head ? { x: head.rotation.x, y: head.rotation.y } : { x: 0, y: 0 }
 }
 
+function suavizarValor(atual, alvo, delta, velocidade = 6) {
+  return atual + (alvo - atual) * Math.min(1, delta * velocidade)
+}
+
 function applyArmPose(humanoid, armAngle, sway, isVRM0) {
   const sign = isVRM0 ? 1 : -1
   const leftUpperArm = humanoid?.getNormalizedBoneNode("leftUpperArm")
@@ -64,27 +68,64 @@ function applyArmPose(humanoid, armAngle, sway, isVRM0) {
 
 function applyIdleMotion(humanoid, t, breath) {
   const chest = humanoid?.getNormalizedBoneNode("chest")
-  if (chest) chest.rotation.x = breath * 0.02
+  if (chest) {
+    chest.rotation.x = breath * 0.03
+    chest.rotation.z = Math.sin(t * 0.9 + 3) * 0.008
+  }
 
   const spine = humanoid?.getNormalizedBoneNode("spine")
-  if (spine) spine.rotation.y = Math.sin(t * 0.6) * 0.03
+  if (spine) {
+    spine.rotation.y = Math.sin(t * 0.6) * 0.02
+    spine.rotation.x = Math.sin(t * 0.4 + 2) * 0.008
+  }
 }
 
 
-function applyHead(humanoid, bind, t, gesture, mouse) {
+/**
+ * Controla a entrada/saída suave dos gestos, guardando estado no próprio vrm.
+ * Retorna o gesto efetivamente ativo (com decaimento após o fim).
+ */
+function atualizarGesto(vrm, t, delta, gesture) {
+  if (gesture) {
+    if (vrm._gestoAtual !== gesture) {
+      vrm._gestoAtual = gesture
+      vrm._gestoInicio = t
+      vrm._gestoFade = 1
+    }
+    return gesture
+  }
+
+  if (vrm._gestoFade && vrm._gestoFade > 0) {
+    vrm._gestoFade = Math.max(0, vrm._gestoFade - delta / 0.35)
+    if (vrm._gestoFade <= 0) {
+      vrm._gestoAtual = null
+      vrm._gestoInicio = null
+    }
+    return vrm._gestoAtual
+  }
+  return null
+}
+
+
+function applyHead(vrm, humanoid, t, delta, gesture, mouse) {
   const head = humanoid?.getNormalizedBoneNode("head")
   if (!head) return
 
-  let offX = Math.sin(t * 0.8) * 0.02 
-  let offY = 0
+  const bind = vrm._headBind ?? { x: 0, y: 0 }
+
+  let offX = Math.sin(t * 0.35 + 1.3) * 0.012 + Math.sin(t * 1.9) * 0.005
+  let offY = Math.sin(t * 0.55 + 2.1) * 0.012
 
   if (gesture) {
-    const osc = Math.sin(t * 9) * 0.25
+    const inicio = vrm._gestoInicio ?? t
+    const entrada = Math.min(1, (t - inicio) / 0.22)
+    const fade = vrm._gestoFade ?? 1
+    const osc = Math.sin(t * 7) * 0.2 * entrada * fade
     if (gesture === "nod") offX = osc
-    else if (gesture === "shake") offY = osc
+    else offY = osc
   } else if (mouse) {
-    offX = -mouse.y * 0.12
-    offY = mouse.x * 0.18
+    offX += -mouse.y * 0.1
+    offY += mouse.x * 0.15
   }
 
   head.rotation.x = bind.x + offX
@@ -107,10 +148,34 @@ function applyEmotion(expr, emotion) {
   setExpr(expr, ["neutral", "Neutral"], values.neutral)
 }
 
-function applyBlink(expr, t, eyesClosed = false) {
-  const blink = eyesClosed ? 1 : (Math.sin(t * 2.5) > 0.97 ? 1 : 0)
-  setExpr(expr, ["blink", "Blink"], blink)
+function applyBlink(vrm, expr, t, eyesClosed = false) {
+  if (eyesClosed) {
+    vrm._blinkAte = null
+    vrm._proximoPiscar = null
+    setExpr(expr, ["blink", "Blink"], 1)
+    return
+  }
+
+  if (vrm._proximoPiscar == null) {
+    vrm._proximoPiscar = t + 0.8 + Math.random() * 3
+  }
+
+  if (vrm._blinkAte == null && t >= vrm._proximoPiscar) {
+    vrm._blinkAte = t + 0.13
+  }
+
+  if (vrm._blinkAte != null) {
+    if (t < vrm._blinkAte) {
+      setExpr(expr, ["blink", "Blink"], 1)
+      return
+    }
+    vrm._blinkAte = null
+    vrm._proximoPiscar = t + 1.2 + Math.random() * 3.5
+  }
+
+  setExpr(expr, ["blink", "Blink"], 0)
 }
+
 function applyLipSync(expr, intensities) {
   const v = intensities || {}
   setExpr(expr, VOWEL_NAMES.aa, v.aa ?? 0)
@@ -132,15 +197,38 @@ function applyLipSync(expr, intensities) {
  */
 export function animarAvatar(vrm, t, delta, intensities, armAngle = 1.0, gesture = null, eyesClosed = false, mouse = null, emotion = "neutral") {
   const humanoid = vrm.humanoid
-  const breath = Math.sin(t * 1.5)
 
-  applyArmPose(humanoid, armAngle, breath * 0.02, vrm._isVRM0)
-  applyIdleMotion(humanoid, t, breath)
-  applyHead(humanoid, vrm._headBind ?? { x: 0, y: 0 }, t, gesture, mouse)
+  vrm._mixer?.update(delta)
+
+  // Quando uma animação VRMA está ativa, ela controla o esqueleto;
+  // o procedural fica limitado às expressões (blink, lip sync, emoção).
+  if (vrm._vrmaAtivo === true) {
+    const expr = vrm.expressionManager
+    if (expr) {
+      applyBlink(vrm, expr, t, eyesClosed)
+      applyLipSync(expr, intensities)
+      applyEmotion(expr, emotion)
+    }
+
+    vrm.update(delta)
+    return
+  }
+
+  const base = Math.sin(t * 1.5)
+  const respiracao = base * (0.6 + 0.4 * Math.sin(t * 0.23 + 1.7))
+
+  if (vrm._bracoAtual == null) vrm._bracoAtual = armAngle
+  vrm._bracoAtual = suavizarValor(vrm._bracoAtual, armAngle, delta)
+
+  const gestoAtivo = atualizarGesto(vrm, t, delta, gesture)
+
+  applyArmPose(humanoid, vrm._bracoAtual, respiracao * 0.02, vrm._isVRM0)
+  applyIdleMotion(humanoid, t, respiracao)
+  applyHead(vrm, humanoid, t, delta, gestoAtivo, mouse)
 
   const expr = vrm.expressionManager
   if (expr) {
-    applyBlink(expr, t, eyesClosed)
+    applyBlink(vrm, expr, t, eyesClosed)
     applyLipSync(expr, intensities)
     applyEmotion(expr, emotion)
   }

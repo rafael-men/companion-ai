@@ -1,5 +1,3 @@
-// Gera src/lib/backgrounds.js a partir das imagens em public/assets/.
-// Uso: node utils/gen-backgrounds.mjs  (ou: npm run backgrounds)
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 
@@ -8,7 +6,7 @@ const OUT = join(process.cwd(), "src", "lib", "backgrounds.js")
 
 const EXT = /\.(png|jpe?g|webp|gif)$/i
 
-// Transforma "praia_tropical.jpg" -> "Praia tropical"
+
 function toLabel(file) {
   const nome = file.replace(EXT, "").replace(/[_-]+/g, " ").trim()
   return nome.charAt(0).toUpperCase() + nome.slice(1)

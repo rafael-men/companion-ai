@@ -22,8 +22,12 @@ export default function SidePanel({
   onLipSyncIntensityChange,
   panelTheme,
   onPanelThemeChange,
+  animation,
+  onAnimationChange,
   dark,
   onToggleDark,
+  transparente,
+  onToggleTransparencia,
 }) {
   
   const [expanded, setExpanded] = useState(false)
@@ -83,6 +87,8 @@ export default function SidePanel({
             onLipSyncIntensityChange={onLipSyncIntensityChange}
             panelTheme={panelTheme}
             onPanelThemeChange={onPanelThemeChange}
+            animation={animation}
+            onAnimationChange={onAnimationChange}
           />
         ) : (
           <SidebarRail
@@ -100,6 +106,8 @@ export default function SidePanel({
           onClose={() => setOpen(false)}
           dark={dark}
           onToggleDark={onToggleDark}
+          transparente={transparente}
+          onToggleTransparencia={onToggleTransparencia}
         />
       </aside>
     </TooltipProvider>
